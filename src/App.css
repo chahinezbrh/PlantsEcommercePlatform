@@ -1,0 +1,54 @@
+@import url('https://fonts.googleapis.com/css2?family=Red+Hat+Text:ital,wght@0,300..700;1,300..700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap');
+
+@font-face {
+    font-family: "RedHatText";
+    src: url("/fonts/RedHatText-Regular.ttf") format("truetype");
+    font-weight: normal;
+    font-style: normal;
+  }
+
+  @font-face {
+    font-family: "Inter";
+    src: url("/fonts/Inter_18pt-SemiBold.ttf") format("truetype");
+    font-weight: normal; /* SemiBold correspond généralement à 600 */
+    font-style: normal;
+  }
+
+  @font-face {
+    font-family: "Inter2";
+    src: url("/fonts/Inter_18pt-Regular.ttf") format("truetype");
+    font-weight: normal; /* SemiBold correspond généralement à 600 */
+    font-style: normal;
+  }
+
+  body{
+    margin: 0;
+    width: 100%;
+    font-family: 'Inter', sans-serif;
+    padding: 0;
+    background-color: #e1ece3;
+
+  }
+
+  @media (max-width: 1024px) {
+    
+    html{
+      width: max-content;
+      margin:0;
+      padding:0;
+     
+  }
+
+@media (min-width: 1024px) {
+    
+  html{
+    width:max-content;
+    margin:0;
+    padding:0;
+    
+}
+  }
+}
+
+ 
