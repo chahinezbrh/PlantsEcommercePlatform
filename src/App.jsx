@@ -21,6 +21,15 @@ import OrderDetails from './pages/OrderDetails.jsx';
 import EditProduct from './pages/EditProduct.jsx'
 import Events from './pages/Events.jsx';
 import Eventsform from './pages/Eventsform.jsx'
+import ConfirmOrder from './pages/ConfirmOrder.jsx'
+import AddNursery from './pages/AddNursery';
+import AddEvent from './pages/AddEvent';
+import EventsDashboard from './pages/EventsDashboard.jsx';
+import Nurserydashboard from './pages/Nurserydashboard.jsx';
+import ManageNursery from './pages/ManageNursery.jsx';
+import Statistics from './pages/Statistics.jsx';
+
+
 
 
 
@@ -41,13 +50,13 @@ const App = () => {
             <Route path='/reset-password' element={<ResetPassword/>}/>
             <Route path='/personal-information' element={<PersonalInformation />}/>
             <Route path='/myproducts' element={<MyProducts/>}/>
-            <Route path='/waiting' element={<Waiting/>}/>
-            <Route path='/product-details' element={<ProductDetails/>}/>
+            <Route path='/waiting/:token' element={<Waiting/>}/>
+            <Route path='/product-details/:id' element={<ProductDetails/>}/>
             <Route path='/add-product' element={<AddProduct/>}/>
             <Route path='/shop' element={<Shop/>}/>
             <Route path='/change-password' element={<ChangePassword/>}/>
             <Route path='/edit-product' element={<EditProduct/>}/>
-            <Route path='/change-email' element={<ChangeEmail/>}/>
+            <Route path='/change-email/:token' element={<ChangeEmail/>}/>
             <Route path='/change-number' element={<ChangeNumber/>}/>
             <Route path='/cart' element={<Cart/>}/>
             <Route path='/my-orders' element={<Myorders/>}/>
@@ -55,6 +64,16 @@ const App = () => {
             <Route path='/edit-product' element={<EditProduct/>}/>
             <Route path='/events' element={<Events/>}/>
             <Route path='/events-form' element={<Eventsform/>}/>
+            <Route path='/confirm-order' element={<ConfirmOrder/>}/>
+            <Route path='/AddNursery' element={<AddNursery/>}/>
+            <Route path='/Nurserydashboard' element={<Nurserydashboard/>}/>
+            <Route path='/ManageNursery' element={<ManageNursery/>}/>
+            <Route path='/Statistics' element={<Statistics/>}/>
+            <Route path='/AddEvent' element={<AddEvent/>}/>
+            <Route path='/EventsDashboard' element={<EventsDashboard/>}/>
+                
+                
+                
 
            
             

@@ -93,7 +93,7 @@ const Navbar = () => {
           src={shop}
           alt="Shop"
           className="cursor-pointer h-6 w-6"
-          onClick={() => navigate('/shop')}
+          onClick={() => navigate('/cart')}
         />
       </div>
 

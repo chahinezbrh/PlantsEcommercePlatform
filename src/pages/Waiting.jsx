@@ -5,11 +5,12 @@ import {useNavigate} from "react-router-dom";
 
 
 
+
 const Waiting = () => {
 
   return (
     <>
-   
+     <Navbar/>
      <div className="flex justify-center items-center py-10">
         <div className="w-full h-auto bg-[#fff] px-40 py-7 h-screen shadow-[0px_4px_4px_0px_rgba(0,0,0,0.25)] border-2 border-[#eaeaea]/70 backdrop-blur-[2px]">
 

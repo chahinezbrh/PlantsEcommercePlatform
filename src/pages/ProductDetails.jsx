@@ -1,4 +1,4 @@
-import React , {useState} from 'react'
+import React , {useState, useEffect} from 'react'
 import Navbar from '../components/Navbar';
 import circle from '../assets/circle.svg';
 import LeftArrow from '../assets/LeftArrow.svg';
@@ -9,41 +9,112 @@ import PeaceLily2 from '../assets/PeaceLily2.svg';
 import increment from '../assets/increment.svg'
 import buy from '../assets/buy.svg'
 import bigrectangle from '../assets/bigrectangle.svg'
-import produit1 from '../assets/produit1.svg';
-import produit2 from '../assets/produit2.svg';
-import produit3 from '../assets/produit3.svg';
-import produit4 from '../assets/produit4.svg';
+import { useLocation } from "react-router-dom";
+import axios from 'axios';
+import { useParams } from 'react-router-dom';
+import AddtoCart from '../Api/Cart';
+import { useNavigate } from 'react-router-dom';
 
 export const ProductDetails = () => {
 
-  const [count, setCount] = useState(1);
+   const [count, setCount] = useState(1);
+   const { state } = useLocation();
+   const [currentIndex, setCurrentIndex] = useState(0);
+   const [Plants, setPlants] = useState([]);
+   const [Plant, setPlant] = useState({})
+   const {id} = useParams()
+   const navigate = useNavigate();
+   
+     
+    useEffect(() => {
+    const fetchCart = async () => {
+      try {
+
+        const response = await axios.get('http://localhost:9900/api/products/AllProduct')
+        const response2 = await axios.get(`http://localhost:9900/api/products/get-product/${id}`)
+        console.log("Response status:", response2.status);
+        console.log("Response data:", response2.data);
+        setPlants(response.data);
+        setPlant(response2.data)
+      } catch (err) {
+        console.log(err.message);
+      }
+    };
+
+    fetchCart();
+  }, []);
+
+
+
+    useEffect(() => {
+  if (Plants.length && id) {
+    const foundIndex = Plants.findIndex((p) => p._id === id);
+    if (foundIndex !== -1) {
+      setCurrentIndex(foundIndex);
+    }
+  }
+}, [Plants, id]);
+console.log(Plants)
+
+  const currentPlant = Plants[currentIndex];
+console.log(currentPlant)
+  if (!currentPlant) {
+    return <p>No plant found</p>;
+  }
+
+  const { name, image, price, description } = currentPlant;
+
+   const handleNext = () => {
+    console.log('he')
+    setCurrentIndex((prev) => (prev + 1) % Plants.length);
+  };
+
+  const handlePrev = () => {
+    setCurrentIndex((prev) => (prev - 1 + Plants.length) % Plants.length);
+  };
+
+  const handleIncrement = (id) => {
+
+    try {
+      
+      console.log(id)
+       const response = axios.post(`http://localhost:9900/api/cart/increment/${id}` ,{}, { withCredentials: true })
+       console.log(response)
+          
+    } catch (error) {
+      console.log(error)
+    }
+
+  };
+
   return (
+  
     
   <>
     <Navbar/>
     <div className="flex w-full  h-screen pl-20">
 
-      <img src={left} alt="" className='w-7 pt-4 cursor-pointer'/>
+      <img src={left} alt="" className='w-7 pt-4 cursor-pointer' onClick={handlePrev}/>
       <div className="relative flex ">
       <img src={circle} alt="" className='w-120 px-10' />
-      <img src={PeaceLily2} alt="" className=" w-120 absolute top-55/100 left-1/2 transform -translate-x-1/2 -translate-y-1/2" />
+      <img src={`http://localhost:9900/uploads/${currentPlant.image}`} alt="" className=" w-120 absolute top-55/100 left-1/2 transform -translate-x-1/2 -translate-y-1/2" />
       </div>
-      <img src={right} alt="" className='w-7 cursor-pointer' />
+      <img src={right} alt="" className='w-7 cursor-pointer' onClick={handleNext} />
 
       <div className="pl-30 pt-24 flex-col ">
-        <p className="text-[45px] font-RedHatText font-semibold ">Peony Plant</p>
-        <p className="text-[22px] font-RedHatText w-100 pt-7 text-[rgba(0,0,0,0.67)] font-light ">Plant potted in Eco-friendly coconut coir soil made from coconuts Plant will arrive potted in your choice of planter</p>
+        <p className="text-[45px] font-RedHatText font-semibold ">{currentPlant.name}</p>
+        <p className="text-[22px] font-RedHatText w-100 pt-7 text-[rgba(0,0,0,0.67)] font-light ">{currentPlant.description}</p>
         <p className="text-[14px] text-[#B51D1D] pt-7 font-light ">Amount available</p>
-        <p className='text-[38px] font-semibold py-7'>250 da</p>
+        <p className='text-[38px] font-semibold py-7'>{currentPlant.price}DA</p>
 
       <div className="flex">
 
-          <button  className=" h-15 w-56 bg-[#43862E]  text-white text-[20px] font-semibold font-RedHatText rounded-[30px] shadow-2xl  cursor-pointer transition duration-300 hover:opacity-70">Buy Now</button>
+          <button  className=" h-15 w-56 bg-[#43862E]  text-white text-[20px] font-semibold font-RedHatText rounded-[30px] shadow-2xl  cursor-pointer transition duration-300 hover:opacity-70" onClick={()=> AddtoCart(currentPlant._id)}>Buy Now</button>
           <div className="ml-5 w-15 h-8 mt-4  pr-3 text-right text-[20px] bg-white text-gray-600">
             {count}
           </div>
-          <img src={increment} onClick={() => setCount(count+1)} alt="" className="pl-3 cursor-pointer" />
-          <img src={buy} alt="" className="w-16 pl-4 cursor-pointer" />
+          <img src={increment} onClick={()=> handleIncrement(currentPlant._id)}  alt="" className="pl-3 cursor-pointer" />
+          <img src={buy} alt="" className="w-16 pl-4 cursor-pointer z-20" onClick={()=> navigate('/cart')}/>
 
       </div>
 
@@ -55,138 +126,47 @@ export const ProductDetails = () => {
 
 
 
-  <div className="w-screen border-b-1 border-[#aaaa] shadow-md"></div>
-    
+  <div className="pt-10 w-screen border-b-1 border-[#aaaa] shadow-md"></div>
+  
 
-       {/* here the first line  */}
-  <div className="flex gap-10 pt-30">
-    {/* the first product */}
-    <div className="flex justify-center w-64 h-64 bg-[#43862E11] border-2 border-[#EAEAEA] rounded-[65px]   [box-shadow:0_6px_10px_#00000033]  " style={{ overflow: 'visible' }}> 
-     <img src={produit1} alt=""  className="absolute top-[670px] w-100 h-auto "/>
-     <div className="flex-grow mt-30">
-      <button className="w-24 h-9 text-[#FAFAFA] font-RedHatText font-light shadow-2xl  bg-[#43862E] absolute ml-7 mt-15 rounded-[13px] cursor-pointer transition duration-300 hover:opacity-70">
-        Buy
-      </button>
-      <img src={buy} alt="" className="w-9 ml-40 mt-15" />
-      <div className="flex">
-      <p className="pt-15 pl-7 text-[14px] font-semibold font-RedHatText " >Snake plant</p>
-      <p className="pt-15 pl-16 text-[14px] font-normal font-RedHatText ">290 da</p>
-      </div>
-     </div>
-    </div>
+  <div className=" pt-20 grid grid-cols-1 space-y-10 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-10 px-15">
     
-    {/* the second product */}
-    <div className="flex justify-center w-64 h-64 bg-[#43862E11] border-2 border-[#EAEAEA] rounded-[65px]   [box-shadow:0_6px_10px_#00000033]  " style={{ overflow: 'visible' }}> 
-     <img src={produit2} alt=""  className="absolute top-[717px] w-90 h-auto "/>
-     <div className="flex-grow mt-30">
-      <button className="w-24 h-9 text-[#FAFAFA] font-RedHatText font-light shadow-2xl  bg-[#43862E] absolute ml-7 mt-15 rounded-[13px] cursor-pointer transition duration-300 hover:opacity-70">
-        Buy
-      </button>
-      <img src={buy} alt="" className="w-9 ml-40 mt-15" />
-      <div className="flex">
-      <p className="pt-15 pl-7 text-[14px] font-semibold font-RedHatText " >Snake plant</p>
-      <p className="pt-15 pl-16 text-[14px] font-normal font-RedHatText ">290 da</p>
-      </div>
-     </div>
+      {Plants.map((plant) => (
+        <div key={plant._id} className="flex flex-col items-center">
+         
+          <div
+            className="flex flex-col items-center justify-center w-64 h-64 bg-[#43862E11] border-2 border-[#EAEAEA] rounded-[65px] shadow-md px-4 py-4 " style={{ overflow: 'visible' }}
+          >
+            <div className="flex justify-center">
+              <img
+                src={`http://localhost:9900/uploads/${plant.image}`}
+                alt={plant.name}
+                className="max-h-full object-contain w-80  cursor-pointer"
+                onClick={() => navigate(`/product-details/${plant._id}`, { state: plant})}
+              />
+            </div>
   
-    </div>
-    
-     {/* the third product */}
-    <div className="flex justify-center w-64 h-64 bg-[#43862E11] border-2 border-[#EAEAEA] rounded-[65px]   [box-shadow:0_6px_10px_#00000033]  " style={{ overflow: 'visible' }}> 
-     <img src={produit3} alt=""  className="absolute top-[698px] w-70 h-auto "/>
-     <div className="flex-grow mt-30">
-      <button className="w-24 h-9 text-[#FAFAFA] font-RedHatText font-light shadow-2xl  bg-[#43862E] absolute ml-7 mt-15 rounded-[13px] cursor-pointer transition duration-300 hover:opacity-70">
-        Buy
-      </button>
-      <img src={buy} alt="" className="w-9 ml-40 mt-15" />
-      <div className="flex">
-      <p className="pt-15 pl-7 text-[14px] font-semibold font-RedHatText " >Snake plant</p>
-      <p className="pt-15 pl-16 text-[14px] font-normal font-RedHatText ">290 da</p>
-      </div>
-     </div>
+           
+            <div className="flex pb-20 space-x-9 items-center w-full ml-10">
+              <button className="w-24 h-9  text-[#FAFAFA] font-RedHatText font-light bg-[#43862E] rounded-[13px] cursor-pointer transition duration-300 hover:opacity-70 shadow-md" onClick={()=> navigate('/events')}>
+                Buy
+              </button>
+              <img src={buy} alt="cart" className="w-8 cursor-pointer" onClick={()=> navigate('/cart')}/>
+            </div>
+          </div>
   
-    </div>
-    
-    {/* the fourth product */}
-    <div className="flex justify-center w-64 h-64 bg-[#43862E11] border-2 border-[#EAEAEA] rounded-[65px]   [box-shadow:0_6px_10px_#00000033]  " style={{ overflow: 'visible' }}> 
-     <img src={produit4} alt=""  className="absolute top-[700px] w-100 h-auto "/>
-     <div className="flex-grow mt-30">
-      <button className="w-24 h-9 text-[#FAFAFA] font-RedHatText font-light shadow-2xl  bg-[#43862E] absolute ml-7 mt-15 rounded-[13px] cursor-pointer transition duration-300 hover:opacity-70">
-        Buy
-      </button>
-      <img src={buy} alt="" className="w-9 ml-40 mt-15" />
-      <div className="flex">
-      <p className="pt-15 pl-7 text-[14px] font-semibold font-RedHatText " >Snake plant</p>
-      <p className="pt-15 pl-16 text-[14px] font-normal font-RedHatText ">290 da</p>
-      </div>
-     </div>
-  
-    </div>
-    
-    
+          
+          <div className="flex space-x-10 w-64 pt-2">
+            <p className="text-[14px] pl-10 font-semibold font-RedHatText">{plant.name}</p>
+            <p className="text-[14px] font-normal font-RedHatText">{plant.price}</p>
+          </div>
+      
+        </div>
+       ))}
   </div>
 
 
-  {/* the second line */}
-  <div className="flex gap-10 pt-30">
-   {/* the first product */}
-  <div className="flex justify-center w-64 h-64 bg-[#43862E11] border-2 border-[#EAEAEA] rounded-[65px]   [box-shadow:0_6px_10px_#00000033]  " style={{ overflow: 'visible' }}> 
-     
-     <div className="flex-grow mt-30">
-      <button className="w-24 h-9 text-[#FAFAFA] font-RedHatText font-light shadow-2xl  bg-[#43862E] absolute ml-7 mt-15 rounded-[13px] cursor-pointer transition duration-300 hover:opacity-70">
-        Buy
-      </button>
-      <img src={buy} alt="" className="w-9 ml-40 mt-15" />
-      <div className="flex">
-      <p className="pt-15 pl-7 text-[14px] font-semibold font-RedHatText " >Snake plant</p>
-      <p className="pt-15 pl-16 text-[14px] font-normal font-RedHatText ">290 da</p>
-      </div>
-     </div>
-    </div>
-      {/* the second product */}
-    <div className="flex justify-center w-64 h-64 bg-[#43862E11] border-2 border-[#EAEAEA] rounded-[65px]   [box-shadow:0_6px_10px_#00000033]  " style={{ overflow: 'visible' }}> 
-     
-     <div className="flex-grow mt-30">
-      <button className="w-24 h-9 text-[#FAFAFA] font-RedHatText font-light shadow-2xl  bg-[#43862E] absolute ml-7 mt-15 rounded-[13px] cursor-pointer transition duration-300 hover:opacity-70">
-        Buy
-      </button>
-      <img src={buy} alt="" className="w-9 ml-40 mt-15" />
-      <div className="flex">
-      <p className="pt-15 pl-7 text-[14px] font-semibold font-RedHatText " >Snake plant</p>
-      <p className="pt-15 pl-16 text-[14px] font-normal font-RedHatText ">290 da</p>
-      </div>
-     </div>
-    </div>
-   {/* the third product */}
-    <div className="flex justify-center w-64 h-64 bg-[#43862E11] border-2 border-[#EAEAEA] rounded-[65px]   [box-shadow:0_6px_10px_#00000033]  " style={{ overflow: 'visible' }}> 
-     
-     <div className="flex-grow mt-30">
-      <button className="w-24 h-9 text-[#FAFAFA] font-RedHatText font-light shadow-2xl  bg-[#43862E] absolute ml-7 mt-15 rounded-[13px] cursor-pointer transition duration-300 hover:opacity-70">
-        Buy
-      </button>
-      <img src={buy} alt="" className="w-9 ml-40 mt-15" />
-      <div className="flex">
-      <p className="pt-15 pl-7 text-[14px] font-semibold font-RedHatText " >Snake plant</p>
-      <p className="pt-15 pl-16 text-[14px] font-normal font-RedHatText ">290 da</p>
-      </div>
-     </div>
-    </div>
-    {/* the fourth product */}
-    <div className="flex justify-center w-64 h-64 bg-[#43862E11] border-2 border-[#EAEAEA] rounded-[65px]   [box-shadow:0_6px_10px_#00000033]  " style={{ overflow: 'visible' }}> 
-     
-     <div className="flex-grow mt-30">
-      <button className="w-24 h-9 text-[#FAFAFA] font-RedHatText font-light shadow-2xl  bg-[#43862E] absolute ml-7 mt-15 rounded-[13px] cursor-pointer transition duration-300 hover:opacity-70">
-        Buy
-      </button>
-      <img src={buy} alt="" className="w-9 ml-40 mt-15" />
-      <div className="flex">
-      <p className="pt-15 pl-7 text-[14px] font-semibold font-RedHatText " >Snake plant</p>
-      <p className="pt-15 pl-16 text-[14px] font-normal font-RedHatText ">290 da</p>
-      </div>
-     </div>
-    </div>
-  </div>
-
+  
 
       
 

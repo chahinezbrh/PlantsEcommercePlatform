@@ -9,79 +9,10 @@ import '../App.css';
 import CrassulaOvata from '../assets/CrassulaOvata.svg'
 import product4 from '../assets/product4.svg';
 import { useNavigate , useLocation} from 'react-router-dom';
+import axios from 'axios';
+import { useEffect, useState } from 'react';
 
 
-
-
-const plants = [
-  {
-    id: 1,
-    name: "Snake plant",
-    price: "290DA",
-    stock: 19,
-    status: "In stock",
-    image: product4, 
-  },
-  {
-    id: 2,
-    name: "Snake plant",
-    price: "290DA",
-    stock: 19,
-    status: "In stock",
-    image: product4,
-  },
-  {
-    id: 3,
-    name: "Snake plant",
-    price: "290DA",
-    stock: 19,
-    status: "In stock",
-    image: product4,
-  },
-  {
-    id: 4,
-    name: "Snake plant",
-    price: "290DA",
-    stock: 19,
-    status: "In stock",
-    image: product4,
-  },
-  {
-    id: 5,
-    name: "Snake plant",
-    price: "290DA",
-    stock: 19,
-    status: "In stock",
-    image: product4,
-  },
-  {
-    id: 6,
-    name: "Snake plant",
-    price: "290DA",
-    stock: 19,
-    status: "In stock",
-    image: product4,
-  },
-  {
-    id: 7,
-    name: "Snake plant",
-    price: "290DA",
-    stock: 19,
-    status: "In stock",
-    image: product4,
-  },
-  {
-    id: 7,
-    name: "Snake plant",
-    price: "290DA",
-    stock: 19,
-    status: "In stock",
-    image: product4,
-  }
-
-
-  
-];
 
 const MyProducts = () => {
 
@@ -89,6 +20,24 @@ const MyProducts = () => {
       const navigate = useNavigate();
       const location = useLocation();
       const isActive =(path) => location.pathname === path;
+      const [Plants, setPlants] = useState([]);
+      const token = localStorage.getItem('Token');
+      console.log(token);
+      useEffect(() => {
+          const fetchCart = async () => {
+            try {
+              const response = await axios.get('http://localhost:9900/api/products/my-product', {headers: {Authorization :`Bearer ${token}`} })
+              console.log("Response status:", response.status);
+              console.log("Response data:", response.data);
+              setPlants(response.data);
+            } catch (err) {
+              console.log(err.message);
+            }
+          };
+      
+          fetchCart();
+        }, []);
+      
   return (
     <>
     <Navbar/>
@@ -157,14 +106,14 @@ const MyProducts = () => {
           </thead>
         
           <tbody className="divide-y divide-[#828282]">
-            {plants.map((plant) => (
+            {Plants.map((plant) => (
               <tr
-              key={plant.id}
+              key={plant._id}
                 className=" "
               >
                 <td className="px-10 flex justify-center items-center">
                   <img
-                    src={plant.image}
+                    src={`http://localhost:9900/uploads/${plant.image}`}
                     alt={plant.name}
                     className="w-30 h-30 object-cover rounded cursor-pointer "
                   />

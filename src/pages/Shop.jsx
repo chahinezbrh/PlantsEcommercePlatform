@@ -1,33 +1,52 @@
 import React, { useState } from "react";
-
 import panier from "../assets/buy.svg";
-
 import categories from "../assets/categories.svg";
 import croix from "../assets/croix.svg";
 import loupe from "../assets/loupe.svg";
 import plant8 from "../assets/produit1.svg";
-import { useParams, Link } from "react-router-dom";
-import plant from "../assets/PeaceLily2.svg";
-import plant09 from "../assets/produit4.svg";
+import { useParams, Link, Navigate } from "react-router-dom";
 import Navbar from "../components/Navbar";
+import { useNavigate, useLocation} from 'react-router-dom';
+import buy from '../assets/buy.svg';
 
+import AddtoCart from "../Api/Cart.js";
+import { useEffect } from "react";
+import axios from "axios";
+import produit1 from '../assets/produit1.svg';
 
-const allPlants = [
-  { id: 1, name: "Snake plant", image: plant8, price: "290DA" },
-  { id: 2, name: "Peony plant", image: plant, price: "300DA" },
-  { id: 3, name: "Bonsai plant", image: plant09, price: "450DA" },
-];
 
 export const Shop = () => {
+  
+ 
+
   const { pageNumber = 1 } = useParams();
   const currentPage = parseInt(pageNumber, 10);
-
   const [searchInput, setSearchInput] = useState("");
-  const [filteredPlants, setFilteredPlants] = useState(allPlants);
+  const [filteredPlants, setFilteredPlants] = useState();
   const [searchDone, setSearchDone] = useState(false);
+  const navigate = useNavigate();
+  const { state } = useLocation();
+  useEffect(() => {
+    const fetchCart = async () => {
+      try {
+        const response = await axios.get('http://localhost:9900/api/products/AllProduct')
+        console.log("Response status:", response.status);
+        console.log("Response data:", response.data);
+        setFilteredPlants(response.data);
+      } catch (err) {
+        console.log(err.message);
+      }
+    };
 
+    fetchCart();
+  }, []);
+
+
+   console.log("filteredPlants:", filteredPlants);
+   console.log("searchDone:", searchDone);
+ 
   const handleSearch = () => {
-    const results = allPlants.filter((plant) =>
+    const results = filteredPlants.filter((plant) =>
       plant.name.toLowerCase().includes(searchInput.toLowerCase())
     );
     setFilteredPlants(results);
@@ -36,7 +55,7 @@ export const Shop = () => {
 
   const clearSearch = () => {
     setSearchInput("");
-    setFilteredPlants(allPlants);
+    setFilteredPlants(filteredPlants);
     setSearchDone(false);
   };
 
@@ -46,8 +65,8 @@ export const Shop = () => {
       {/* Search Bar */}
       <div className="flex flex-col items-center my-12 px-4">
         <div className="relative w-full max-w-2xl bg-[#f9f9f9] rounded-full px-6 py-4 flex items-center">
-          <img src={categories} alt="Categories" className="w-6 h-6 mr-4" />
-          <span className="text-black mr-4 hidden sm:block">Categories</span>
+          {/* <img src={categories} alt="Categories" className="w-6 h-6 mr-4" />
+          <span className="text-black mr-4 hidden sm:block">Categories</span> */}
           <input
             type="text"
             placeholder="Search"
@@ -72,36 +91,46 @@ export const Shop = () => {
 
       {/* Shop Items */}
 
-      <div className="flex flex-wrap justify-center gap-6 px-4">
-        {filteredPlants.length > 0 ? (
-          filteredPlants.map((plant) => (
-            <div
-              key={plant.id}
-              className="bg-[#43862e]/5 p-6 rounded-3xl border-2 border-[#eaeaea]/70 backdrop-blur-[2px] shadow-md w-full max-w-sm flex flex-col items-center"
-            >
-              <img
-                src={plant.image}
-                alt={plant.name}
-                className="w-full h-auto rounded-2xl"
-              />
-              <div className="flex justify-between items-center w-full mt-4">
-                <h4 className="font-semibold text-black">{plant.name}</h4>
-                <span className="text-black">{plant.price}</span>
-              </div>
-              <div className="flex items-center justify-between w-full mt-4">
-                <button className="bg-[#43862e] hover:bg-[#366c26] text-white px-4 py-2 rounded-xl border-2 border-[#43862e] hover:border-[#366c26]">
-                  Buy
-                </button>
-                <div >
-                  <img src={panier} alt="Cart" className="w-10" />
-                </div>
-              </div>
-            </div>
-          ))
-        ) : searchDone ? (
-          <p className="text-gray-500 text-xl">No plants found.</p>
-        ) : null}
+<div className="grid grid-cols-1 space-y-10 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-10 px-15">
+  {filteredPlants && filteredPlants.length > 0 ? (
+    filteredPlants.map((plant) => (
+      <div key={plant._id} className="flex flex-col items-center">
+      
+        <div
+          className="flex flex-col items-center justify-center w-72 h-72 bg-[#43862E11] border-2 border-[#EAEAEA] rounded-[65px] shadow-md px-4 py-4 " style={{ overflow: 'visible' }}
+        >
+          <div className="flex justify-center">
+            <img
+              src={`http://localhost:9900/uploads/${plant.image}`}
+              alt={plant.name}
+              className="max-h-full object-contain w-fit cursor-pointer"
+              onClick={() => navigate(`/product-details/${plant._id}`, { state: plant})}
+            />
+          </div>
+
+         
+          <div className="flex pb-20 space-x-20 items-center justify-self-end w-full ml-10">
+            <button className="w-24 h-9  text-[#FAFAFA] font-RedHatText font-light bg-[#43862E] rounded-[13px] cursor-pointer transition duration-300 hover:opacity-70 shadow-md" onClick ={()=>AddtoCart(plant._id)}>
+              Buy
+            </button>
+            <img src={buy} alt="cart" className="w-8 cursor-pointer" onClick={()=> navigate('/cart')}/>
+          </div>
+        </div>
+
+        
+        <div className="flex justify-between w-72 pt-2">
+          <p className="text-[14px] pl-10 font-semibold text-right font-RedHatText">{plant.name}</p>
+          <p className="text-[14px] font-normal font-RedHatText">{plant.price}DA</p>
+        </div>
       </div>
+    ))
+  ) : searchDone ? (
+    <p className="text-gray-500 text-xl">No plants found.</p>
+  ) : null}
+</div>
+
+
+
 
       {/* Pagination Footer */}
       <div className="flex justify-center items-center gap-4 mt-20">

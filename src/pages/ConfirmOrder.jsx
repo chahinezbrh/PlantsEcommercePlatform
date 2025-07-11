@@ -3,12 +3,41 @@ import { useNavigate } from "react-router-dom";
 import arrow from "../assets/arrow.svg";
 import panier from "../assets/panier.svg";
 import arrow3 from "../assets/arrow3.svg";
+import { useState } from "react";
+import axios from 'axios'
 
 
 
  const ConfirmOrder = () => {
   const navigate = useNavigate();
+  const [formData, setformData] = useState({
+    name : '',
+     familyName : '', 
+     email : '',
+     phone : '', 
+     wilaya : '',
+      city : '', 
+    address : ''
+  });
 
+  const handleChange = (e) => {
+      setformData({ ...formData, [e.target.name]: e.target.value })
+    }
+
+     const handleSubmit = async(e)  =>{
+     e.preventDefault()
+      try {
+         console.log(formData)
+        const res = await axios.post('http://localhost:9900/api/order/create', formData , {withCredentials: true})
+        console.log(res)
+        localStorage.setItem('Token', res.data.token)
+        
+      } catch (error) {
+        console.log(error)
+      }
+
+    }
+  
   return (
     <div className="min-h-screen w-full bg-[#e1ece3] flex flex-col items-center px-4 py-8">
       {/* Header */}
@@ -30,18 +59,25 @@ import arrow3 from "../assets/arrow3.svg";
 
       {/* White Box */}
       <div className="w-full max-w-[731px] bg-white shadow-md border-2 border-[#eaeaea]/70 backdrop-blur-[2px] rounded-lg flex flex-col items-center px-6 py-8 md:px-12 md:py-12">
-        <form className="w-full flex flex-col gap-6 items-center">
+        <form onSubmit={handleSubmit} className="w-full flex flex-col gap-6 items-center">
           {/* Row 1: Name & Family Name */}
           <div className="w-full flex flex-col md:flex-row gap-4">
             <input
               className="h-[55px] w-full bg-[#e1ece3] rounded-[15px] px-4 "
               type="text"
               placeholder="Name"
+              name = "name"
+              value={formData.name}
+              onChange ={handleChange}
             />
             <input
               className="h-[55px] w-full bg-[#e1ece3] rounded-[15px] px-4"
               type="text"
               placeholder="Family Name"
+               name = "familyName"
+              value={formData.familyName}
+              onChange ={handleChange}
+            
             />
           </div>
 
@@ -50,6 +86,10 @@ import arrow3 from "../assets/arrow3.svg";
             className="h-[55px] w-full bg-[#e1ece3] rounded-[15px] px-4"
             type="email"
             placeholder="Enter Email"
+             name = "email"
+              value={formData.email}
+              onChange ={handleChange}
+            
           />
 
           {/* Row 3: Phone Number */}
@@ -57,6 +97,10 @@ import arrow3 from "../assets/arrow3.svg";
             className="h-[55px] w-full bg-[#e1ece3] rounded-[15px] px-4"
             type="tel"
             placeholder="Enter Phone Number"
+             name = "phone"
+              value={formData.phone}
+              onChange ={handleChange}
+            
           />
 
           {/* Row 4: Wilaya & City */}
@@ -65,6 +109,10 @@ import arrow3 from "../assets/arrow3.svg";
               <select
                 className="appearance-none h-[55px] bg-[#e1ece3] rounded-[15px] px-4 pr-10 text-[#828282]"
                 defaultValue="Wilaya"
+                 name = "wilaya"
+              value={formData.wilaya}
+              onChange ={handleChange}
+            
               >
                 <option value="Wilaya">Wilaya</option>
 
@@ -256,6 +304,10 @@ import arrow3 from "../assets/arrow3.svg";
                 className="h-[55px] bg-[#e1ece3] rounded-[15px] px-4"
                 type="text"
                 placeholder="City"
+                 name = "city"
+                 value={formData.city}
+                 onChange ={handleChange}
+            
               />
             </div>
           </div>
@@ -263,6 +315,10 @@ import arrow3 from "../assets/arrow3.svg";
             className="h-[55px] w-full bg-[#e1ece3] rounded-[15px] px-4"
             type="text"
             placeholder="Enter Your Address"
+             name = "address"
+              value={formData.address}
+              onChange ={handleChange}
+            
           />
           {/* Summary */}
           <div className="w-full flex justify-center gap-32 items-center mt-9">

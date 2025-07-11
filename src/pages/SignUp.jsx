@@ -24,9 +24,12 @@ export const SignUp = () => {
             const res = await axios.post("http://localhost:9900/api/pepiniere/register", formData, {
                 headers: {
                   "Content-Type": "application/json"
+                 
                 }
+                 
             });
             console.log("Success:", res.data);
+            alert("Check Your email to activate your account.");
             // You can redirect or update UI here after success
         } catch (error) {
             console.error("Error:", error.response?.data || error.message);

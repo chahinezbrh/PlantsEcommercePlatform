@@ -2,80 +2,40 @@ import React from 'react'
 import Navbar from '../components/Navbar';
 import pfp from '../assets/pfp.svg'
 import { useNavigate , useLocation} from 'react-router-dom';
+import { useState , useEffect} from 'react';
+import axios from 'axios'
+
 
    
 
 
-const myorders = [
-  {
-    order: "#1001",
-    client: "Crussel@gmail.com",
-    date: "May 8, 2025",
-    total: "1450DA",
-    status: "pending",
-    
-  },
-  {
-    order: "#1001",
-    client: "Crussel@gmail.com",
-    date: "May 8, 2025",
-    total: "1450DA",
-    status: "pending",
-  },
-  {
-    order: "#1001",
-    client: "Crussel@gmail.com",
-    date: "May 8, 2025",
-    total: "1450DA",
-    status: "pending",
-  },
-  {
-    order: "#1001",
-    client: "Crussel@gmail.com",
-    date: "May 8, 2025",
-    total: "1450DA",
-    status: "pending",
-  },
-  {
-    order: "#1001",
-    client: "Crussel@gmail.com",
-    date: "May 8, 2025",
-    total: "1450DA",
-    status: "pending",
-  },
-  {
-    order: "#1001",
-    client: "Crussel@gmail.com",
-    date: "May 8, 2025",
-    total: "1450DA",
-    status: "pending",
-  },
-  {
-    order: "#1001",
-    client: "Crussel@gmail.com",
-    date: "May 8, 2025",
-    total: "1450DA",
-    status: "pending",
-  },
-  {
-    order: "#1001",
-    client: "Crussel@gmail.com",
-    date: "May 8, 2025",
-    total: "1450DA",
-    status: "pending",
-  }
 
-
-  
-];
 
 const Myorders = () => {
 
     const navigate = useNavigate();
     const location = useLocation();
     const isActive =(path) => location.pathname === path;
-   
+    const [Orders, setOrders ] = useState([])
 
+    
+         const token = localStorage.getItem('Token');
+         console.log(token);
+         useEffect(() => {
+             const fetchCart = async () => {
+               try {
+                 const response = await axios.get('http://localhost:9900/api/order/my-orders', {headers: {Authorization :`Bearer ${token}`} })
+                 console.log("Response status:", response.status);
+                 console.log("Response data:", response.data);
+                 setOrders(response.data);
+               } catch (err) {
+                 console.log(err.message);
+               }
+             };
+         
+             fetchCart();
+           }, []);
+         
   return (
     <>
      <Navbar/>
@@ -144,9 +104,9 @@ const Myorders = () => {
         <table className="">
           <thead className="border-b  border-[#828282] ">
           <tr className="text-left pt-8 text-black font-RedHatText text-[14px] ">
-              <th className="px-10 pb-8  ">Order</th>
-              <th className="px-10 pb-8">Client</th>
-              <th className="px-10 pb-8">Date</th>
+              <th className="px-10 pb-8  ">Name</th>
+              <th className="px-10 pb-8">Family Name</th>
+              <th className="px-10 pb-8">Email</th>
               <th className="px-12 pb-8">Total</th>
               <th className="px-10 pb-8">Status</th>
               <th className="px-10 pb-8 "></th>
@@ -154,15 +114,15 @@ const Myorders = () => {
           </thead>
         
           <tbody className="divide-y divide-[#828282]">
-            {myorders.map((myorder) => (
+            {Orders.map((myorder) => (
               <tr
               key={myorder.order}
                 className=" "
               >
-                <td className="px-10 pt-10 flex justify-center items-center">{myorder.order}</td>
-                <td className="px-10 text-[13px] font-RedHatText font-light ">{myorder.client}</td>
-                <td className="px-10 py-8 font-light text-[14px] ">{myorder.date}</td>
-                <td className="px-12 py-8 font-light text-[14px] ">{myorder.total}</td>
+                <td className="px-10 pt-10 flex justify-center items-center">{myorder.shippingInfo.name}</td>
+                <td className="px-10 text-[13px] font-RedHatText font-light ">{myorder.shippingInfo.familyName}</td>
+                <td className="px-12 py-8 font-light text-[14px] ">{myorder.shippingInfo.email}</td>
+                <td className="px-12 py-8 font-light text-[14px] ">{myorder.totalPrice}</td>
                 <td className="px-10 py-8 font-normal text-[14px] ">{myorder.status}</td>
                 <td className="px-4 py-8 ">
                   <a href="/order-details" className="text-[#43862E] underline text-[13px] hover:text-green-900">

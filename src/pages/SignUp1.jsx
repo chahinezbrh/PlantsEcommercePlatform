@@ -38,9 +38,9 @@ const Signup = ({setStep, setFormData, formData}) => {
   };
 
   return (
-    <div className="w-full h-screen relative bg-[#e1ece3] flex items-center justify-center px-4 lg:px-16">
+    <div className="w-screen h-screen  relative bg-[#e1ece3] flex flex-row-reverse items-center justify-center">
       {/* Image */}
-      <div className="absolute top-0 right-0 w-[50vw] h-full">
+      <div className="w-1/2 h-full hidden lg:block">
         <img
           className="w-full h-full object-cover"
           src={img}
@@ -49,29 +49,30 @@ const Signup = ({setStep, setFormData, formData}) => {
       </div>
 
       {/* Conteneur principal */}
-      <div className="relative w-full h-full flex flex-col items-start justify-start px-[8vw]">
+      <div className=" w-full lg:w-1/2 h-full flex flex-col items-center justify-center px-[8vw]">
         {/* Texte "Already have an account?" */}
-        <p className="absolute left-[5vw] top-[5vh] text-black text-lg font-inter font-redhat">
+                {/* Titre "SIGN UP" */}
+                <h1 className=" text-black text-4xl font-inter font-semibold">
+          SIGN UP
+        </h1>
+        <p className=" text-black mb-14 text-sm font-inter font-redhat">
           Already have an account?{" "}
           <a className="text-[#000000] underline" href="/login">
             Login
           </a>
         </p>
 
-        {/* Titre "SIGN UP" */}
-        <h1 className="absolute left-[18vw] top-[14vh] text-black text-[4vw] font-inter font-semibold">
-          SIGN UP
-        </h1>
+
 
         {/* Formulaire adaptatif */}
-        <form className="absolute left-[8vw] top-[30vh] w-[35vw] flex flex-col gap-[4vh]">
+        <form className="  ml-10 w-full flex flex-col gap-6">
           <input
             type="text"
             name="name"
             placeholder="Business name"
             value={formData.name}
             onChange={handleChange}
-            className="w-full h-[9vh] bg-white rounded-[15px] px-4 text-black text-[14px]"
+            className="w-100 h-10 px-4 py-6 bg-white rounded-[15px]  text-black text-[14px] outline-none focus:outline-none"
           />
           <input
             type="text"
@@ -79,7 +80,7 @@ const Signup = ({setStep, setFormData, formData}) => {
             name="ownerName"
             value={formData.ownerName}
             onChange={handleChange}
-            className="w-full h-[9vh] bg-white rounded-[15px] px-4 text-black text-[14px]"
+            className="w-100 h-10 px-4  py-6 bg-white rounded-[15px]  text-black text-[14px] outline-none focus:outline-none"
           />
           <input
             type="number"
@@ -87,7 +88,7 @@ const Signup = ({setStep, setFormData, formData}) => {
             name="phone"
             value={formData.phone}
             onChange={handleChange}
-            className="w-full h-[9vh] bg-white rounded-[15px] px-4 text-black text-[14px]"
+            className="w-100 h-10 px-4 py-6 bg-white rounded-[15px] text-black text-[14px] outline-none focus:outline-none"
           />
           <input
             type="text"
@@ -95,7 +96,7 @@ const Signup = ({setStep, setFormData, formData}) => {
             name="address"
             value={formData.address}
             onChange={handleChange}
-            className="w-full h-[9vh] bg-white rounded-[15px] px-4 text-black text-[14px]"
+            className="w-100 h-10 px-4 py-6 bg-white rounded-[15px] text-black text-[14px] outline-none focus:outline-none"
           />
 
           {/* Error Message */}
@@ -104,7 +105,7 @@ const Signup = ({setStep, setFormData, formData}) => {
           {/* Next Button */}
           <button
             onClick={()=>setStep(2)}
-            className="w-[12vw] h-[6vh] text-white rounded-full bg-[#43862E] hover:bg-[#384628] transition duration-300 mt-8 cursor-pointer self-center"
+            className=" py-4 px-16 mr-9 text-white text-lg rounded-full bg-[#43862E] hover:bg-[#384628] transition duration-300 mt-8 cursor-pointer self-center"
           >
             Next
           </button>
